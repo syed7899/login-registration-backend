@@ -14,27 +14,28 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class AppUserService implements UserDetailsService {
+public class InstructorUserService implements UserDetailsService {
 
     private final static String USER_NOT_FOUND_MSG =
             "user with email %s not found";
 
-    private final AppUserRepository appUserRepository;
+    //private final AppUserRepository appUserRepository;
+    private final InstructorUserRepository instructorUserRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override
     public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
-        return appUserRepository.findByEmail(email)
+        return instructorUserRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException(
                                 String.format(USER_NOT_FOUND_MSG, email)));
     }
 
-    public String signUpUser(AppUser appUser) {
-        boolean userExists = appUserRepository
-                .findByEmail(appUser.getEmail())
+    public String signUpUser(Instructor instructorUser) {
+        boolean userExists = instructorUserRepository
+                .findByEmail(instructorUser.getEmail())
                 .isPresent();
 
         if (userExists) {
@@ -45,11 +46,11 @@ public class AppUserService implements UserDetailsService {
         }
 
         String encodedPassword = bCryptPasswordEncoder
-                .encode(appUser.getPassword());
+                .encode(instructorUser.getPassword());
 
-        appUser.setPassword(encodedPassword);
+        instructorUser.setPassword(encodedPassword);
 
-        appUserRepository.save(appUser);
+        instructorUserRepository.save(instructorUser);
 
         String token = UUID.randomUUID().toString();
 
@@ -57,7 +58,7 @@ public class AppUserService implements UserDetailsService {
                 token,
                 LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(15),
-                appUser
+                instructorUser
         );
 
         confirmationTokenService.saveConfirmationToken(
@@ -68,7 +69,7 @@ public class AppUserService implements UserDetailsService {
         return token;
     }
 
-    public int enableAppUser(String email) {
-        return appUserRepository.enableAppUser(email);
+    public int enableInstructor(String email) {
+        return instructorUserRepository.enableInstructor(email);
     }
 }

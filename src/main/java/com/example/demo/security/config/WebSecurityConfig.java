@@ -1,6 +1,7 @@
 package com.example.demo.security.config;
 
-import com.example.demo.appuser.AppUserService;
+
+import com.example.demo.appuser.InstructorUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final AppUserService appUserService;
+    private final InstructorUserService instructorUserService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
@@ -41,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         DaoAuthenticationProvider provider =
                 new DaoAuthenticationProvider();
         provider.setPasswordEncoder(bCryptPasswordEncoder);
-        provider.setUserDetailsService(appUserService);
+        provider.setUserDetailsService(instructorUserService);
         return provider;
     }
 }
